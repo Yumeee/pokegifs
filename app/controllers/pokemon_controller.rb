@@ -6,7 +6,11 @@ class PokemonController < ApplicationController
     id = body["id"]
     types = types(body)
 
-    render json: { id: id, name: name, types: types}
+    gif_res = HTTParty.get("https://api.giphy.com/v1/gifs/search?api_key=9Ziv8OQjpzQYJCkr9URXi65SMIGjtV7B&q=#{name}&rating=g")
+    gif_body = JSON.parse(gif_res.body)
+    gif = random_gif(gif_body).sample
+
+    render json: { id: id, name: name, types: types, gif: gif }
   end
 
 
@@ -15,6 +19,13 @@ class PokemonController < ApplicationController
       hash["type"]["name"]
     end
   end
+
+  def random_gif(body)
+    body["data"].map do |hash|
+       hash["url"]
+    end
+  end
+
 
 
 end
